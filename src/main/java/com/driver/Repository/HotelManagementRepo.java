@@ -25,11 +25,11 @@ public class HotelManagementRepo {
         //Incase somebody is trying to add the duplicate hotelName return FAILURE
         //in all other cases return SUCCESS after successfully adding the hotel to the hotelDb.
 
-        if(hotel.equals(null))
+        if(hotel == null)
             return "FAILURE";
 
         String hotelName= hotel.getHotelName();
-        if(hotelName.equals(null) || hotelHashMap.containsKey(hotelName)) {
+        if(hotelName == null || hotelHashMap.containsKey(hotelName)) {
             return "FAILURE";
         }
         hotelHashMap.put(hotelName,hotel);
