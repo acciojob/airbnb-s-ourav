@@ -7,6 +7,7 @@ import com.driver.model.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +52,10 @@ public class HotelManagementRepo {
         String ans="";
         int max=0;
         for(String hname : hotelHashMap.keySet()){
-            int facilitySize= hotelHashMap.get(hname).getFacilities().size();
+            int facilitySize=0;
+            if(hotelHashMap.get(hname).getFacilities()!=null)
+                facilitySize= hotelHashMap.get(hname).getFacilities().size();
+
             if(facilitySize>max){
                 max=facilitySize;
                 ans=hname;
@@ -64,7 +68,6 @@ public class HotelManagementRepo {
     }
 
     public int bookARoom(@RequestBody Booking booking){
-
         //The booking object coming from postman will have all the attributes except bookingId and amountToBePaid;
         //Have bookingId as a random UUID generated String
         //save the booking Entity and keep the bookingId as a primary key
@@ -72,13 +75,17 @@ public class HotelManagementRepo {
         //If there arent enough rooms available in the hotel that we are trying to book return -1
         //in other case return total amount paid
         int roomsRequired=booking.getNoOfRooms();
-        Hotel hotel=hotelHashMap.get (booking.getHotelName());
-        int roomsAvailable= hotel.getAvailableRooms();
+        if(!hotelHashMap.containsKey(booking.getHotelName()))
+            return -1;
 
-        if(roomsRequired>roomsAvailable){
+        Hotel hotel=hotelHashMap.get(booking.getHotelName());
+        int roomsAvailable=hotel.getAvailableRooms();
+
+        if(roomsRequired>roomsAvailable) {
             return -1;
         }
 
+        hotel.setAvailableRooms(hotel.getAvailableRooms()-roomsRequired);
         int TotalPrice= roomsRequired*hotel.getPricePerNight();
         booking.setAmountToBePaid(TotalPrice);
         String bookingId= UUID.randomUUID().toString();
@@ -106,13 +113,24 @@ public class HotelManagementRepo {
         //If the hotel is already having that facility ignore that facility otherwise add that facility in the hotelDb
         //return the final updated List of facilities and also update that in your hotelDb
         //Note that newFacilities can also have duplicate facilities possible
-        List <Facility> existingFacilities = hotelHashMap.get(hotelName).getFacilities();
+        Hotel hotel;
+        if(!hotelHashMap.containsKey(hotelName)){
+            return null;
+        }
+        else hotel=hotelHashMap.get(hotelName);
+
+        List <Facility> existingFacilities ;
+        if(hotel.getFacilities()==null){
+            existingFacilities=new ArrayList<>();
+        }
+        else existingFacilities=hotel.getFacilities();
+
         for(Facility f: newFacilities){
             if(!existingFacilities.contains(f)){
                 existingFacilities.add(f);
             }
         }
-        hotelHashMap.get(hotelName).setFacilities(existingFacilities);
-        return hotelHashMap.get(hotelName);
+        hotel.setFacilities(existingFacilities);
+        return hotel;
     }
 }

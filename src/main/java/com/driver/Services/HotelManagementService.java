@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class HotelManagementService {
     @Autowired
-    private HotelManagementRepo hotelManagementRepo;
+    private HotelManagementRepo hotelManagementRepo=new HotelManagementRepo();
     public String addHotel(@RequestBody Hotel hotel){
 
         //You need to add an hotel to the database
