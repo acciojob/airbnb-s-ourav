@@ -1,6 +1,9 @@
 package com.driver.model;
 
+import javax.annotation.processing.Generated;
+
 public class Booking {
+
 
     private String bookingId; //This will be a random UUID generated String
 
