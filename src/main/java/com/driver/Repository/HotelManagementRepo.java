@@ -4,12 +4,13 @@ import com.driver.model.Booking;
 import com.driver.model.Facility;
 import com.driver.model.Hotel;
 import com.driver.model.User;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
+@Repository
 public class HotelManagementRepo {
     HashMap <String,Hotel> hotelHashMap=new HashMap<>();
     HashMap <Integer,User> userHashMap=new HashMap<>();
@@ -71,7 +72,7 @@ public class HotelManagementRepo {
         //If there arent enough rooms available in the hotel that we are trying to book return -1
         //in other case return total amount paid
         int roomsRequired=booking.getNoOfRooms();
-        Hotel hotel=hotelHashMap.get (booking.getHotelName())
+        Hotel hotel=hotelHashMap.get (booking.getHotelName());
         int roomsAvailable= hotel.getAvailableRooms();
 
         if(roomsRequired>roomsAvailable){
